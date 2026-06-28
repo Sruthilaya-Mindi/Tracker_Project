@@ -13,7 +13,7 @@ export function EmployeeDashboard() {
   const { profile } = useAuth();
   const [allocations, setAllocations] = useState<Allocation[]>([]);
   const [mentor, setMentor] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
@@ -33,8 +33,19 @@ export function EmployeeDashboard() {
     })();
   }, [profile]);
 
-  if (loading || !profile) {
+  if (loading) {
     return <div className="flex h-96 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-200 border-t-violet-600" /></div>;
+  }
+
+  if (!profile) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <div className="text-center">
+          <p className="mb-2 text-sm text-muted-foreground">No profile found for the authenticated user.</p>
+          <p className="text-sm">Create a `profiles` row linked to the user's `auth.users.id` in Supabase.</p>
+        </div>
+      </div>
+    );
   }
 
   const activeAllocs = allocations.filter((a) => a.status === 'active');
